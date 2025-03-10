@@ -1,6 +1,7 @@
 const express = require('express')
 const User = require('../models/user')
 const router = express.Router()
+const authentication = require('../middlewares/authMiddleware')
 const jwt = require('jsonwebtoken');
 
 router.post('/register',async(req,res)=>{
@@ -41,19 +42,22 @@ router.post('/login',async(req,res)=>{
 
 })
 
+router.get('/me',authentication,async(req,res) => {
+    try {
+        console.log("running...")
+        const user = await User.findById(req.user.userId).select('-password')
+        if(!user){
+            res.status(404).send({message: "User not found"})
+        }
+        res.send(user)
+    } catch (error) {
+        res.status(500).send({message:error.message})
+        
+    }
 
 
 
-
-
-
-
-
-
-
-
-
-
+})
 
 
 
